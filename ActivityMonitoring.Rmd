@@ -9,10 +9,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Reading data
+# Loading and preprocessing the data
 
 We stop the process if the csv file is not in the working directory.  
 Storing data into a data frame, without addressing NA's
+Storing data without NA in another data frame
 
 ```{r read}
 file <- "activity.csv"
@@ -22,6 +23,30 @@ if (!file.exists(file)) {
 }
 
 activity <- read.csv(file)
-summary(activity)
+NoNAActivity <- subset(activity, is.na(activity$steps) == F)
+```
+
+# What is mean total number of steps taken per day?
+
+## Calculating the total number of steps taken each day
+```{r totalsteps}
+library(plyr)
+stepsPerDay <- ddply(NoNAActivity, .(date), summarise, steps=sum(steps))
+```
+
+## Creating the histogram
+```{r histogramsteps}
+hist(stepsPerDay$steps, breaks = 20, main="Number of Steps a day", xlab="Total number of steps taken each day", ylab = "Number of Days", col="cyan")
+```
+
+## Calculate and report the mean and median total number of steps taken per day
+1. Mean
+```{r Mean}
+mean(stepsPerDay$steps)
+```
+
+2. Median
+```{r Median}
+median(stepsPerDay$steps)
 ```
 
