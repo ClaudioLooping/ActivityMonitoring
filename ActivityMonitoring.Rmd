@@ -75,3 +75,67 @@ averageInterval[which.max(averageInterval$steps),]
 
 And the winner is ... : interval from 8:35 to 8:40
 
+# Imputing missing values
+
+## 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+```{r NbNA}
+sum(is.na(activity$steps))
+```
+
+## 2. Devise a strategy for filling in all of the missing values in the dataset.
+Considering the data summary  
+`r summary(activity)`,  
+I've decided to replace NA's with average value for that 5-min interval
+
+## 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+```{r FillNA}
+activityNAFilled <- activity
+
+for (i in 1:nrow(activityNAFilled)){
+    if (is.na(activityNAFilled$steps[i])){
+        activityNAFilled$steps[i] <- averageInterval$steps[which(activityNAFilled$interval[i] == averageInterval$interval)]}
+}
+
+activityNAFilled <- arrange(activityNAFilled, interval)
+```
+
+## 4. Make a histogram of the total number of steps taken each day and calculate and report the mean and median total number of steps taken per day.  
+###Do these values differ from the estimates from the first part of the assignment?  
+###What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+Calculating the total number of steps taken each day
+
+```{r Histo}
+totalDayNAFilled <- ddply(activityNAFilled, .(date), summarise, steps=sum(steps))
+```
+
+Creating the plot
+
+```{r plot}
+hist(totalDayNAFilled$steps, breaks = 20, main="Number of Steps (no NA's)", xlab="Total number of steps taken each day", ylab = "Number of Days", col="cyan")
+```
+
+Calculate and report the mean and median total number of steps taken per day on the imputed dataset
+
+```{r MeanMedian}
+mean(totalDayNAFilled$steps)
+
+median(totalDayNAFilled$steps)
+```
+
+Test whether these values differ from the ones with NA not filled
+
+```{r Comparison}
+abs(mean(stepsPerDay$steps)-mean(totalDayNAFilled$steps))
+
+abs(median(stepsPerDay$steps)- median(totalDayNAFilled$steps))/median(stepsPerDay$steps)
+```
+
+The mean didn't change after the imputing, the median slightly changed about 0.1% of the original value.
+
+Test how total steps taken per day differ
+
+```{r Difference}
+Difference <- sum(activityNAFilled$steps) - sum(NoNAActivity$steps)
+Difference
+```
