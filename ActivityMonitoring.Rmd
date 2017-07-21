@@ -50,3 +50,28 @@ mean(stepsPerDay$steps)
 median(stepsPerDay$steps)
 ```
 
+# What is the average daily activity pattern?
+
+## 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+Computing the average number of steps taken in each 5-minutes intervals
+
+```{r Average}
+averageInterval <- ddply(NoNAActivity, .(interval), summarise, steps=mean(steps))
+```
+
+Creating the plot
+
+```{r Plot}
+plot(averageInterval$interval, averageInterval$steps,axes = F, type="l", col="blue", xlab="Time", ylab="Average Number of Steps", main="Average Daily Activity Pattern")
+axis(1,at=c(0,600,1200,1800,2400), label = c("0:00","6:00","12:00","18:00","24:00"))
+axis(2)
+```
+
+## 2. Which 5-minutes interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{r WhichMax}
+averageInterval[which.max(averageInterval$steps),]
+```
+
+And the winner is ... : interval from 8:35 to 8:40
+
