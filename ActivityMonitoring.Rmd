@@ -139,3 +139,29 @@ Test how total steps taken per day differ
 Difference <- sum(activityNAFilled$steps) - sum(NoNAActivity$steps)
 Difference
 ```
+
+Conclusion: to fill NA's of the dataset causes the estimation on total steps per day to increase
+
+# Are there differences in activity patterns between weekdays and weekends?
+
+## 1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+
+```{r Factor}
+activityNAFilled$weekdays <- weekdays(as.Date(activityNAFilled$date))
+activityNAFilled$weekdays <- ifelse(activityNAFilled$weekdays %in% c("Samedi", "Dimanche"),"weekend", "weekday")
+```
+
+## 2.Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
+
+Computing the average for each interval
+
+```{r AverageInt}
+average <- ddply(activityNAFilled, .(interval, weekdays), summarise, steps=mean(steps))
+```
+
+Creating the plot
+
+```{r PlotInt}
+library(lattice)
+xyplot(steps ~ interval | weekdays, data = average, layout = c(1, 2), type="l", xlab = "Interval", ylab = "Number of steps")
+```
