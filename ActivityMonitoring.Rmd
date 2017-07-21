@@ -1,0 +1,27 @@
+---
+title: "Activity Monitoring"
+author: "Claudio"
+date: "21/07/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Reading data
+
+We stop the process if the csv file is not in the working directory.  
+Storing data into a data frame, without addressing NA's
+
+```{r read}
+file <- "activity.csv"
+  
+if (!file.exists(file)) {
+        stop("activity.csv file not found")
+}
+
+activity <- read.csv(file)
+summary(activity)
+```
+
